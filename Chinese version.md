@@ -115,3 +115,48 @@ Let's say you want to highlight the Chess cells when a piece is being dragged. A
   
   ```
 It instructs React DnD to pass the up-to-date values of highlighted and hovered to all the Cell instances as props.它通知React DnD 传递最新的值（突出的和悬停的）
+
+
+  ## Connectors连接器 
+
+If the backend handles the DOM events, but the components use React to describe the DOM, how does the backend know which DOM nodes to listen to? Enter the connectors.如果后端处理DOM事件，组件使用React来描述DOM，那么后端怎么知道要监听哪个DOM节点呢？   
+
+The connectors let you assign one of the predefined roles (a drag source, a drag preview, or a drop target) to the DOM nodes in your render function. 连接器让你在渲染函数钟，分配一个提前定义的角色给DOM节点。
+
+In fact, a connector is passed as the first argument to the collecting function we described above. Let's see how we can use it to specify the drop target:
+```
+function collect(connect, monitor) {
+  return {
+    highlighted: monitor.canDrop(),
+    hovered: monitor.isOver(),
+    connectDropTarget: connect.dropTarget()
+  };
+}
+```
+In the component's render method, we are then able to access both the data obtained from the monitor, and the function obtained from the connector:
+```
+render() {
+  const { highlighted, hovered, connectDropTarget } = this.props;
+
+  return connectDropTarget(
+    <div className={classSet({
+      'Cell': true,
+      'Cell--highlighted': highlighted,
+      'Cell--hovered': hovered
+    })}>
+      {this.props.children}
+    </div>
+  );
+}
+```
+
+The connectDropTarget call tells React DnD that the root DOM node of our component is a valid drop target, and that its hover and drop events should be handled by the backend. Internally it works by attaching a callback ref to the React element you gave it. The function returned by the connector is memoized, so it doesn't break the shouldComponentUpdate optimizations.
+
+  ## Drag Sources and Drop Targets 
+  So far we have covered the backends which work with the DOM, the data, as represented by the items and types, and the collecting functions that, thanks to the monitors and the connectors, let you describe what props React DnD should inject into your components.
+
+But how do we configure our components to actually have those props injected? How do we perform the side effects in response to the drag and drop events? Meet the drag sources and the drop targets, the primary abstraction units of React DnD. They really tie the types, the items, the side effects, and the collecting functions together with your components.
+
+Whenever you want to make a component or some part of it draggable, you need to wrap that component into a drag source declaration. Every drag source is registered for a certain type, and has to implement a method producing an item from the component's props. It can also optionally specify a few other methods for handling the drag and drop events. The drag source declaration also lets you specify the collecting function for the given component.
+
+The drop targets are very similar to the drag sources. The only difference is that a single drop target may register for several item types at once, and instead of producing an item, it may handle its hover or drop.
