@@ -19,7 +19,18 @@ This is not a coincidence, as React DnD uses Redux internally.
 
   ## Backends 
 
-React DnD is built on top of the HTML5 drag and drop API. It is a reasonable default because it screenshots the dragged DOM node and uses it as a “drag preview” out of the box. It's handy that you don't have to do any drawing as the cursor moves. This API is also the only way to handle the file drop events.
+React DnD is built on top of the HTML5 drag and drop API.
+React DnD是基于H5的拖放API的。    
+
+It is a reasonable default because it screenshots the dragged DOM node and uses it as a “drag preview” out of the box.
+这事一个合理的缺省，因为它仿照dragged DOM节点，并且创造性地将它用作成一个拖放象征。   
+
+It's handy that you don't have to do any drawing as the cursor moves. 
+它很方便使用，光标移动的时候你不需要有任何画图操作。   
+
+This API is also the only way to handle the file drop events.
+这个API也是处理文件拖放的唯一方式。   
+
 
 Unfortunately, the HTML5 drag and drop API also has some downsides. It does not work on touch screens, and it provides less customization opportunities on IE than in other browsers.
 
