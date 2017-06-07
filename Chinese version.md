@@ -160,3 +160,126 @@ But how do we configure our components to actually have those props injected? Ho
 Whenever you want to make a component or some part of it draggable, you need to wrap that component into a drag source declaration. Every drag source is registered for a certain type, and has to implement a method producing an item from the component's props. It can also optionally specify a few other methods for handling the drag and drop events. The drag source declaration also lets you specify the collecting function for the given component.
 
 The drop targets are very similar to the drag sources. The only difference is that a single drop target may register for several item types at once, and instead of producing an item, it may handle its hover or drop.
+
+  ##  Higher-Order Components and ES7 decorators 
+  How do you wrap your components? What does wrapping even mean? If you have not worked with higher-order components before, go ahead and read this article, as it explains the concept in detail.
+
+A higher-order component is just a function that takes a React component class, and returns another React component class. The wrapping component provided by the library renders your component in its render method and forwards the props to it, but also adds some useful behavior.
+
+In React DnD, DragSource and DropTarget, as well as a few other top-level exported functions, are in fact higher-order components. They breathe the drag and drop magic into your components.
+
+One caveat of using them is that they require two function applications. For example, here's how to wrap YourComponent in a DragSource:
+```
+import { DragSource } from 'react-dnd';
+
+class YourComponent {
+  /* ... */
+}
+
+export default DragSource(/* ... */)(YourComponent);
+```
+
+Notice how, after specifying the DragSource parameters in the first function call, there is a second function call, where you finally pass your class. This is called currying, or partial application, and is necessary for the ES7 decorator syntax to work out of the box:
+```
+import { DragSource } from 'react-dnd';
+
+  @DragSource(/* ... */)
+  export default class YourComponent {
+    /* ... */
+}
+```
+
+You don't have to use this syntax, but if you like it, you can enable it by transpiling your code with Babel, and putting { "stage": 1 } into your .babelrc file.
+
+Even if you don't plan to use ES7, the partial application can still be handy, because you can combine several DragSource and DropTarget declarations in ES5 or ES6 using a functional composition helper such as _.flow. In ES7, you can just stack the decorators to achieve the same effect.
+
+```
+import { DragSource, DropTarget } from 'react-dnd';
+import flow from 'lodash/flow';
+
+class YourComponent {
+  render() {
+    const { connectDragSource, connectDropTarget } = this.props
+    return connectDragSource(connectDropTarget(
+      /* ... */
+    ))
+  }
+}
+
+export default flow(
+  DragSource(/* ... */),
+  DropTarget(/* ... */)
+)(YourComponent);
+```
+
+  ## Putting It All Together 
+  Below is an example of wrapping an existing Card component into a drag source.
+  ```
+  import React from 'react';
+import { DragSource } from 'react-dnd';
+
+// Drag sources and drop targets only interact
+// if they have the same string type.
+// You want to keep types in a separate file with
+// the rest of your app's constants.
+const Types = {
+  CARD: 'card'
+};
+
+/**
+ * Specifies the drag source contract.
+ * Only `beginDrag` function is required.
+ */
+const cardSource = {
+  beginDrag(props) {
+    // Return the data describing the dragged item
+    const item = { id: props.id };
+    return item;
+  },
+
+  endDrag(props, monitor, component) {
+    if (!monitor.didDrop()) {
+      return;
+    }
+
+    // When dropped on a compatible target, do something
+    const item = monitor.getItem();
+    const dropResult = monitor.getDropResult();
+    CardActions.moveCardToList(item.id, dropResult.listId);
+  }
+};
+
+/**
+ * Specifies which props to inject into your component.
+ */
+function collect(connect, monitor) {
+  return {
+    // Call this function inside render()
+    // to let React DnD handle the drag events:
+    connectDragSource: connect.dragSource(),
+    // You can ask the monitor about the current drag state:
+    isDragging: monitor.isDragging()
+  };
+}
+
+class Card extends React.Component {
+  render() {
+    // Your component receives its own props as usual
+    const { id } = this.props;
+
+    // These two props are injected by React DnD,
+    // as defined by your `collect` function above:
+    const { isDragging, connectDragSource } = this.props;
+
+    return connectDragSource(
+      <div>
+        I am a draggable card number {id}
+        {isDragging && ' (and I am being dragged now)'}
+      </div>
+    );
+  }
+}
+
+// Export the wrapped version
+export default DragSource(Types.CARD, cardSource, collect)(Card);
+  ```
