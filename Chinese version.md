@@ -48,7 +48,7 @@ Under the hood, all the backends do is translate the DOM events into the interna
 在底层，所有后端做的事情就是将DOM事件转换成Redux的内部活动，这样React DnD就可以处理了。
 
 
-  ## Items and Types 
+  ## Items
 
 Like Flux (or Redux), React DnD uses data, and not the views, as the source of truth.   
 
@@ -72,6 +72,20 @@ Describing the dragged data as a plain object helps you keep the components deco
 把拖放的数据描述成一个简单的事物，可以保持组件解耦，不相互影响。
 
 
-What is a type, then? A type is a string (or a symbol) uniquely identifying a whole class of items in your application. In a Kanban board app, you might have a 'card' type representing the draggable cards and a 'list' type for the draggable lists of those cards. In Chess, you might only have a single 'piece' type.
+  ## Types 
 
-Types are useful because, as your app grows, you might want to make more things draggable, but you don't necessarily want all the existing drop targets to suddenly start reacting to the new items. The types let you specify which drag sources and drop targets are compatible. You're probably going to have an enumeration of the type constants in your application, just like you may have an enumeration of the Redux action types.
+What is a type, then?   
+A type is a string (or a symbol) uniquely identifying a whole class of items in your application.   
+
+In a Kanban board app, you might have a 'card' type representing the draggable cards and a 'list' type for the draggable lists of those cards. 在一个看板的应用中，你可能会有一个“卡片”类型，代表着可以拖动的卡片；一个“列表”类型，代表着可以拖动的列表。  
+
+
+In Chess, you might only have a single 'piece' type.在国际象棋中，你可能就只有“棋子”这种类型。
+
+Types are useful because, as your app grows, you might want to make more things draggable, but you don't necessarily want all the existing drop targets to suddenly start reacting to the new items. 类型 非常有用，因为随着APP的成长，你可能需要更多可拖放事物。但你肯定不希望所有存在的接收拖放方都突然对新事项做出反应。   
+
+
+The types let you specify which drag sources and drop targets are compatible.   指定类型让你更详细了解拖放源和拖放目标是否兼容。  
+
+
+You're probably going to have an enumeration of the type constants in your application, just like you may have an enumeration of the Redux action types.你可能会遍历应用的所有类型常量，就像可能会遍历Redux动作类型一样。
