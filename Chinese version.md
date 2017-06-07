@@ -89,3 +89,28 @@ The types let you specify which drag sources and drop targets are compatible.  
 
 
 You're probably going to have an enumeration of the type constants in your application, just like you may have an enumeration of the Redux action types.你可能会遍历应用的所有类型常量，就像可能会遍历Redux动作类型一样。
+
+
+  ## Monitors监视器 
+
+Drag and drop is inherently stateful. Either a drag operation is in progress, or it isn't. Either there is a current type and a current item, or there isn't. This state has to live somewhere.
+
+React DnD exposes this state to your components via a few tiny wrappers over the internal state storage called the monitors.React DnD把这些状态暴露给你的组件，通过一些小的封装状态存储，叫监视器。  
+
+The monitors let you update the props of your components in response to the drag and drop state changes.监视器让你根据拖放变化更新组件的props。  
+
+
+For each component that needs to track the drag and drop state, you can define a collecting function that retrieves the relevant bits of it from the monitors.对于每个需要追踪拖放状态的组件，你可以定义一个函数，这个函数通过监视器检索相关的比特。
+
+React DnD then takes care of timely calling your collecting function and merging its return value into your components' props.
+
+Let's say you want to highlight the Chess cells when a piece is being dragged. A collecting function for the Cell component might look like this:
+  ```
+  function collect(monitor) {
+  return {
+    highlighted: monitor.canDrop(),
+    hovered: monitor.isOver()
+  };
+}
+  
+  ```
