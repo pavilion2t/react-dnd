@@ -107,10 +107,11 @@ React DnD then takes care of timely calling your collecting function and merging
 Let's say you want to highlight the Chess cells when a piece is being dragged. A collecting function for the Cell component might look like this:
   ```
   function collect(monitor) {
-  return {
-    highlighted: monitor.canDrop(),
-    hovered: monitor.isOver()
+    return {
+      highlighted: monitor.canDrop(),
+      hovered: monitor.isOver()
   };
 }
   
   ```
+It instructs React DnD to pass the up-to-date values of highlighted and hovered to all the Cell instances as props.它通知React DnD 传递最新的值（突出的和悬停的）
