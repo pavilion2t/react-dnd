@@ -1,23 +1,36 @@
   #  Adding the State 
 
-We want to make the Knight draggable可拖拽的.   
-It's a noble goal, but we need to see past it.   
-What we really mean is that we want to keep the current knightPosition in some kind of state storage存储, and have some way to change it.
+We want to make the Knight draggable我们希望骑士是可拖拽的.   
+It's a noble goal, but we need to see past it. 这是个宏伟的目标，但我们需要越过他。 
+What we really mean is that we want to keep the current knightPosition in some kind of state storage, and have some way to change it.  
+事实上，我们真正要做的是把当前的knightPosition保存为某种状态存储，然后有办法来改变它。
 
-Because setting up this state requires some thought, we won't try to implement实现 dragging at the same time.  
-Instead, we'll start with a simpler implementation.   
-We will move the Knight when you click a particular Square, but only if this is allowed by the Chess rules.   
-Implementing this logic should give us enough insight洞察力 into managing the state, so we can replace clicking with the drag and drop once we've dealt with that.
+Because setting up this state requires some thought, we won't try to implement实现 dragging at the same time.   
+因为设立这些状态需要深思熟虑，所以我们暂时不会实现拖放。  
 
-React is not opinionated 固执己见的 about the state management or the data flow;  
+Instead, we'll start with a simpler implementation.  我们会从一个简单实现开始。
+We will move the Knight when you click a particular Square, but only if this is allowed by the Chess rules.   
+我们会根据国际象棋规则，当你点击特定的正方形，就移动骑士。   
+
+Implementing this logic should give us enough insight洞察力 into managing the state, so we can replace clicking with the drag and drop once we've dealt with that.  
+实现这个逻辑应该会给我们足够的洞察力来管理状态，然后我们就可以用拖放来代替点击。
+
+React is not opinionated about the state management or the data flow;   
+React在状态管理和数据流方面不是固执己见的。  
+
 you can use Flux, Redux, Rx or even Backbone nah, avoid fat models and separate your reads from writes.
 
 I don't want to bother with installing or setting up Redux for this simple example, so I'm going to follow a simpler pattern.  
 It won't scale as well as Redux, but I also don't need it to.   
-I have not decided on the API for my state manager yet, but I'm going to call it Game, and it will definitely need to have some way of signaling data changes to my React code.
+I have not decided on the API for my state manager yet, but I'm going to call it Game, and it will definitely need to have some way of signaling data changes to my React code.  
+我还没有想好状态管理的API，但是已经决定给他命名为Game，毫无疑问，他需要传递一些数据改变的信号给我的React代码。
 
-Since I know this much, I can rewrite my index.js with a hypothetical 假设的 Game that doesn't exist yet.   
-Note that this time, I'm writing my code in blind, not being able to run it yet. This is because I'm still figuring out the API:
+Since I know this much, I can rewrite my index.js with a hypothetical 假设的 Game that doesn't exist yet.     
+既然我知道了这些，我可以重写index.js 包含一个暂时还不存在的Game。  
+
+Note that this time, I'm writing my code in blind, not being able to run it yet. This is because I'm still figuring out the API:  
+声明这个时候，我还只是在盲写，不能调试。因为我还在思考API：  
+
 
 ```
 import React from 'react';
