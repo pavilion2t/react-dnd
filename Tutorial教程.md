@@ -213,5 +213,73 @@ render() {
     </div>
   );
 }
-```
+```  
+  ### 第四步：调整样式  
 At this point, I realize that I forgot to give my squares any layout. I'm going to try Flexbox because why not. I added some styles to the root div, and also wrapped the Squares into divs so I could lay them out. Generally it's a good idea to keep components encapsulated and ignorant of how they're being laid out, even if this means adding wrapper divs.
+ ```
+ import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Square from './Square';
+import Knight from './Knight';
+
+export default class Board extends Component {
+  renderSquare(i) {
+    const x = i % 8;
+    const y = Math.floor(i / 8);
+    const black = (x + y) % 2 === 1;
+
+    const [knightX, knightY] = this.props.knightPosition;
+    const piece = (x === knightX && y === knightY) ?
+      <Knight /> :
+      null;
+
+    return (
+      <div key={i}
+           style={{ width: '12.5%', height: '12.5%' }}>
+        <Square black={black}>
+          {piece}
+        </Square>
+      </div>
+    );
+  }
+
+  render() {
+    const squares = [];
+    for (let i = 0; i < 64; i++) {
+      squares.push(this.renderSquare(i));
+    }
+
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexWrap: 'wrap'
+      }}>
+        {squares}
+      </div>
+    );
+  }
+}
+
+Board.propTypes = {
+  knightPosition: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired
+};
+```
+
+It looks pretty awesome! I don't know how to constrain驱使 the Board to maintain a square aspect ratio比率, but this should be easy to add later.
+
+Think about it for a moment. We just went from nothing to being able to move the Knight on a beautiful Board by changing the knightPosition:   
+我们现在已经可以通过改变knightPosition来改变骑士在白板上的位置：
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Board from './Board';
+
+ReactDOM.render(
+  <Board knightPosition={[7, 4]} />,
+  document.getElementById('root')
+);
+```
