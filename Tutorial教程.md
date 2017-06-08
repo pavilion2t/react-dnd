@@ -226,11 +226,18 @@ import Knight from './Knight';
 
 export default class Board extends Component {
   renderSquare(i) {
-    const x = i % 8;
-    const y = Math.floor(i / 8);
-    const black = (x + y) % 2 === 1;
+        /*
+          当i=1234567，x=1234567,y=0,black===错对错对错对错对
+          当i=8，x=0,y=1,black===对
 
-    const [knightX, knightY] = this.props.knightPosition;
+          当i=9,10,11,12,13,14,15 x=1234567,y=1,black===对错对错对错对
+          ......
+      */
+    const x = i % 8;  //i除以8的余数，可能的结果有12345670，分别表示横坐标
+    const y = Math.floor(i / 8); //i除以8的商，可能的结果有12345670，分别表示纵坐标
+    const black = (x + y) % 2 === 1; //布尔值，是否为黑色
+
+    const [knightX, knightY] = this.props.knightPosition;  //index.js里面的值
     const piece = (x === knightX && y === knightY) ?
       <Knight /> :
       null;
