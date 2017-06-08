@@ -1,22 +1,22 @@
   #  Adding the State 
 
-We want to make the Knight draggable.   
+We want to make the Knight draggable可拖拽的.   
 It's a noble goal, but we need to see past it.   
-What we really mean is that we want to keep the current knightPosition in some kind of state storage, and have some way to change it.
+What we really mean is that we want to keep the current knightPosition in some kind of state storage存储, and have some way to change it.
 
-Because setting up this state requires some thought, we won't try to implement dragging at the same time.  
+Because setting up this state requires some thought, we won't try to implement实现 dragging at the same time.  
 Instead, we'll start with a simpler implementation.   
 We will move the Knight when you click a particular Square, but only if this is allowed by the Chess rules.   
-Implementing this logic should give us enough insight into managing the state, so we can replace clicking with the drag and drop once we've dealt with that.
+Implementing this logic should give us enough insight洞察力 into managing the state, so we can replace clicking with the drag and drop once we've dealt with that.
 
-React is not opinionated about the state management or the data flow;  
+React is not opinionated 固执己见的 about the state management or the data flow;  
 you can use Flux, Redux, Rx or even Backbone nah, avoid fat models and separate your reads from writes.
 
 I don't want to bother with installing or setting up Redux for this simple example, so I'm going to follow a simpler pattern.  
 It won't scale as well as Redux, but I also don't need it to.   
 I have not decided on the API for my state manager yet, but I'm going to call it Game, and it will definitely need to have some way of signaling data changes to my React code.
 
-Since I know this much, I can rewrite my index.js with a hypothetical Game that doesn't exist yet.   
+Since I know this much, I can rewrite my index.js with a hypothetical 假设的 Game that doesn't exist yet.   
 Note that this time, I'm writing my code in blind, not being able to run it yet. This is because I'm still figuring out the API:
 
 ```
@@ -36,11 +36,11 @@ observe(knightPosition =>
 ```
 
 What is this observe function I import?   
-It's just the most minimal way I can think of to subscribe to a changing state.   
+It's just the most minimal最低的 way I can think of to subscribe to a changing state.   
 I could've made it an EventEmitter but why on Earth even go there when all I need is a single change event?   
 I could have made Game an object model, but why do that, when all I need is a stream of values?
 
-Just to verify that this subscription API makes some sense, I'm going to write a fake Game that emits random positions:  
+Just to verify 核实 that this subscription API makes some sense, I'm going to write a fake Game that emits random positions:  
 ```
 export function observe(receive) {
   setInterval(() => receive([
@@ -53,9 +53,9 @@ export function observe(receive) {
 Nothing feels as good as being back into the rendering game!
 
 This is obviously not very useful.   
-If we want some interactivity, we're going to need a way to modify the Game state from our components.   
+If we want some interactivity 交互性, we're going to need a way to modify 修改 the Game state from our components.   
 For now, I'm going to keep it simple and expose a moveKnight function that directly modifies the internal state.   
-This is not going to fare well in a moderately complex app where different state storages may be interested in updating their state in response to a single user action, but in our case this will suffice:  
+This is not going to fare 经营 well in a moderately complex app where different state storages may be interested in updating their state in response to a single user action, but in our case this will suffice 足够:  
 
 ```
 let knightPosition = [0, 0];
@@ -82,11 +82,11 @@ export function moveKnight(toX, toY) {
 
 Now, let's go back to our components.   
 Our goal at this point is to move the Knight to a Square that was clicked. One way to do that is to call moveKnight from the Square itself.   
-However, this would require us to pass the Square its position. Here is a good rule of thumb:  
+However, this would require us to pass the Square its position. Here is a good rule of thumb 经验法则:  
   > If a component doesn't need some data for rendering, it doesn't need that data at all.   
   
 The Square does not need to know its position to render.   
-Therefore, it's best to avoid coupling it to the moveKnight method at this point.   
+Therefore, it's best to avoid coupling 耦合 it to the moveKnight method at this point.   
 Instead, we are going to add an onClick handler to the div that wraps the Square inside the Board:   
 
 ```
