@@ -214,7 +214,8 @@ render() {
   );
 }
 ```  
-  ### 第四步：调整样式  
+  ### 第四步：调整样式   
+  
 At this point, I realize that I forgot to give my squares any layout. I'm going to try Flexbox because why not. I added some styles to the root div, and also wrapped the Squares into divs so I could lay them out. Generally it's a good idea to keep components encapsulated and ignorant of how they're being laid out, even if this means adding wrapper divs.
  ```
  import React, { Component } from 'react';
