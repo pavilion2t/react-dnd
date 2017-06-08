@@ -48,12 +48,18 @@ observe(knightPosition =>
 );
 ```
 
-What is this observe function I import?   
-It's just the most minimal最低的 way I can think of to subscribe to a changing state.   
-I could've made it an EventEmitter but why on Earth even go there when all I need is a single change event?   
-I could have made Game an object model, but why do that, when all I need is a stream of values?
+What is this observe function I import?  我引入的这个 observe 函数是什么？
+It's just the most minimal way I can think of to subscribe to a changing state. 这是我能想到的收集状态改变的最简洁的方式。  
 
-Just to verify 核实 that this subscription API makes some sense, I'm going to write a fake Game that emits random positions:  
+I could've made it an EventEmitter but why on Earth even go there when all I need is a single change event?   
+我本来可以使用一个EventEmitter，但是我只需要简单的变化事件，为什么even go there？？？    
+
+I could have made Game an object model, but why do that, when all I need is a stream of values?  
+我本来可以把Game当成一个实物模型，但是我只需要改变的数据流，所以为什么要那样做呢？  
+
+Just to verify 核实 that this subscription API makes some sense, I'm going to write a fake Game that emits random positions:    
+只要核实这个订阅API行得通，我就会写一个假的Game来产生随机位置：  
+
 ```
 export function observe(receive) {
   setInterval(() => receive([
@@ -64,11 +70,18 @@ export function observe(receive) {
 ```
 
 Nothing feels as good as being back into the rendering game!
+没有比这感觉更好的了，我们又回到了渲染的Game。  
 
-This is obviously not very useful.   
-If we want some interactivity 交互性, we're going to need a way to modify 修改 the Game state from our components.   
-For now, I'm going to keep it simple and expose a moveKnight function that directly modifies the internal state.   
-This is not going to fare 经营 well in a moderately complex app where different state storages may be interested in updating their state in response to a single user action, but in our case this will suffice 足够:  
+This is obviously not very useful. 显然 这不是非常有用。  
+
+If we want some interactivity, we're going to need a way to modify the Game state from our components.   
+如果我们需要一些交互性，我们需要在组件里找到一种方式来修改Game的状态。  
+
+For now, I'm going to keep it simple and expose a moveKnight function that directly modifies the internal state.   
+现在，我要尽量简洁地使用moveKnight函数来直接修改内部状态。  
+
+This is not going to fare 经营 well in a moderately complex app where different state storages may be interested in updating their state in response to a single user action, but in our case this will suffice 足够  
+在比较复杂的APP里，这个方式行不通，因为一个简单的用户操作可能会导致不同的状态存储都更新它们的状态，但是在我们这个例子中是够用了。
 
 ```
 let knightPosition = [0, 0];
@@ -93,14 +106,20 @@ export function moveKnight(toX, toY) {
 }
 ```
 
-Now, let's go back to our components.   
-Our goal at this point is to move the Knight to a Square that was clicked. One way to do that is to call moveKnight from the Square itself.   
+Now, let's go back to our components.  现在我们回到组件。  
+
+Our goal at this point is to move the Knight to a Square that was clicked.  
+现在我们的目标是点击方块就把骑士移动过去。   
+
+One way to do that is to call moveKnight from the Square itself.   
 However, this would require us to pass the Square its position. Here is a good rule of thumb 经验法则:  
   > If a component doesn't need some data for rendering, it doesn't need that data at all.   
   
 The Square does not need to know its position to render.   
 Therefore, it's best to avoid coupling 耦合 it to the moveKnight method at this point.   
-Instead, we are going to add an onClick handler to the div that wraps the Square inside the Board:   
+Instead, we are going to add an onClick handler to the div that wraps the Square inside the Board:     
+我们打算在包裹着Square的div上添加onClick事件：  
+
 
 ```
 import React from 'react';
@@ -138,7 +157,12 @@ handleSquareClick(toX, toY) {
 ```
 
 We could have also added an onClick prop to Square and used it instead, but since we're going to remove the click handler in favor of the drag and drop interface later anyway, why bother.   
-The last missing piece right now is the Chess rule check. The Knight can't just move to an arbitrary square, it is only allowed to make L-shaped moves. I'm adding a canMoveKnight(toX, toY) function to the Game and changing the initial position to A2 to match the Chess rules:   
+
+The last missing piece right now is the Chess rule check.  
+
+The Knight can't just move to an arbitrary square, it is only allowed to make L-shaped moves.  
+
+I'm adding a canMoveKnight(toX, toY) function to the Game and changing the initial position to A2 to match the Chess rules:   
 
 ```
 let knightPosition = [1, 7];
