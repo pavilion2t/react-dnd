@@ -61,6 +61,7 @@ Just to verify 核实 that this subscription API makes some sense, I'm going to 
 只要核实这个订阅API行得通，我就会写一个假的Game来产生随机位置：  
 
 ```
+//加了一个定时器之后骑士的位置会每隔500毫秒改变一次
 export function observe(receive) {
   setInterval(() => receive([
     Math.floor(Math.random() * 8),
