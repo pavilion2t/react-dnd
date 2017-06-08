@@ -62,7 +62,8 @@ ReactDOM.render(<Knight />, document.getElementById('root'));
 ```
 I'm going to do this every time I work on another component, so that I always have something to render. In a larger app, I would use a component playground like cosmos so I'd never write the components in the dark.
 
-I see my Knight on the screen! Time to go ahead and implement the Square now. Here is my first stab:
+I see my Knight on the screen! 骑士出现在屏幕上了！！！  
+Time to go ahead and implement the Square now.现在要开始实现正方形的功能。 Here is my first stab:
 ```
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -80,7 +81,8 @@ Square.propTypes = {
   black: PropTypes.bool
 };
 ```
-Now I change the entry point code to see how the Knight looks inside a Square:
+Now I change the entry point code to see how the Knight looks inside a Square:  
+现在我改变入口文件来看骑士是否在正方形中：
 ```
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -94,11 +96,13 @@ ReactDOM.render(
   document.getElementById('root')
 );
 ```
-Sadly, the screen is empty. I made a few mistakes:
+Sadly, the screen is empty. I made a few mistakes:我做错了一些事情：
 
-  * I forgot to give Square any dimensions so it just collapses. I don't want it to have any fixed size, so I'll give it width: '100%' and height: '100%' to fill the container.
+  * I forgot to give Square any dimensions so it just collapses. I don't want it to have any fixed size, so I'll give it width: '100%' and height: '100%' to fill the container.  
+  * 忘记给正方形指定大小，所以它失败了。我不希望它是固定的大小，所以给它的宽高都是100%来填充容器。
 
-  * I forgot to put {this.props.children} inside the div returned by the Square, so it ignores the Knight passed to it.
+  * I forgot to put {this.props.children} inside the div returned by the Square, so it ignores the Knight passed to it.  
+  * 我忘记了把{this.props.children}放在正方形返回的容器里，所以它忽视了骑士。
 
 Even after correcting these two mistakes, I still can't see my Knight when the Square is black. That's because the default page body text color is black, so it is not visible on the black Square. I could have fixed this by giving Knight a color prop, but a much simpler fix is to set a corresponding color style in the same place where I set backgroundColor. This version of Square corrects the mistakes and works equally great with both colors:
 ```
@@ -153,7 +157,8 @@ Board.propTypes = {
   ).isRequired
 };
 ```
-My only intention so far is to make it render, so that I can start tweaking it:
+My only intention so far is to make it render, so that I can start tweaking it:  
+我唯一的想法就是先把它渲染出来，然后再稍作调整：
 ```
 import React from 'react';
 import ReactDOM from 'react-dom';
