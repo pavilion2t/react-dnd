@@ -15,8 +15,7 @@ In this tutorial, the code examples are available simultaneously同时地 in ES5
 
 The app we're going to build is available as an example on this website.
 
-
-  ## Identifying the Components识别组件   
+     ## Identifying the Components识别组件   
   
   We're going to start by creating some React components first, with no thoughts of the drag and drop interaction. Which components is our Lonely Knight app going to be made of? I can think of a few:
 
@@ -41,7 +40,8 @@ The good news is, it doesn't matter at this point. We're just going to write the
 I prefer to start bottom-up自底向上的；从细节到总体的, because this way I'm always working with something that already exists. If I were to build the Board first, I wouldn't see my results until I'm done with the Square. On the other hand, I can build and see the Square right away without even thinking of the Board. I think that the immediate feedback loop即时反馈循环 is important (you can tell that by another project I work on).
 
 
-     ### 第一步：创建骑士
+     ### 第一步：创建骑士    
+     
 In fact I'm going to start with the Knight. It doesn't have any props at all, and it's the easiest one to build:
 ```
 import React, { Component } from 'react';
@@ -66,7 +66,8 @@ I'm going to do this every time I work on another component, so that I always ha
 
 I see my Knight on the screen! 骑士出现在屏幕上了！！！ 
 
-    ### 第二步：创建正方形  
+    ### 第二步：创建正方形     
+    
   Time to go ahead and implement the Square now.现在要开始实现正方形的功能。 Here is my first stab:
 ```
 import React, { Component } from 'react';
