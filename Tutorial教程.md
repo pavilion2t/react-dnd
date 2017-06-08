@@ -64,9 +64,10 @@ ReactDOM.render(<Knight />, document.getElementById('root'));
 ```
 I'm going to do this every time I work on another component, so that I always have something to render. In a larger app, I would use a component playground like cosmos so I'd never write the components in the dark.
 
-I see my Knight on the screen! 骑士出现在屏幕上了！！！ 
+I see my Knight on the screen! 骑士出现在屏幕上了！！！   
 
-  ### 第二步：创建正方形     
+  ### 第二步：创建正方形   
+  
     
   Time to go ahead and implement the Square now.现在要开始实现正方形的功能。 Here is my first stab:
 ```
