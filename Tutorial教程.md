@@ -34,3 +34,170 @@ Let's consider their props.
 Where will the current state live? I really don't want to put it into the Board component. It's a good idea to have as little state in your components as possible, and because the Board will already have some layout logic, I don't want to also burden it with managing the state.
 
 The good news is, it doesn't matter at this point. We're just going to write the components as if the state existed somewhere, and make sure that they render correctly when they receive it via props, and think about managing the state afterwards!
+
+  ## Creating the Components创建组件 
+
+I prefer to start bottom-up自底向上的；从细节到总体的, because this way I'm always working with something that already exists. If I were to build the Board first, I wouldn't see my results until I'm done with the Square. On the other hand, I can build and see the Square right away without even thinking of the Board. I think that the immediate feedback loop即时反馈循环 is important (you can tell that by another project I work on).
+
+
+In fact I'm going to start with the Knight. It doesn't have any props at all, and it's the easiest one to build:
+```
+import React, { Component } from 'react';
+
+export default class Knight extends Component {
+  render() {
+    return <span>♘</span>;
+  }
+}
+```
+Yes, ♘ is the Unicode knight! It's gorgeous极好的. We could've made its color a prop, but in our example we're not going to have any black knights, so there is no need for that.
+
+It seems to render fine, but just to be sure, I immediately changed my entry point to test it:
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Knight from './Knight';
+
+ReactDOM.render(<Knight />, document.getElementById('root'));
+```
+I'm going to do this every time I work on another component, so that I always have something to render. In a larger app, I would use a component playground like cosmos so I'd never write the components in the dark.
+
+I see my Knight on the screen! Time to go ahead and implement the Square now. Here is my first stab:
+```
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+export default class Square extends Component {
+  render() {
+    const { black } = this.props;
+    const fill = black ? 'black' : 'white';
+
+    return <div style={{ backgroundColor: fill }} />;
+  }
+}
+
+Square.propTypes = {
+  black: PropTypes.bool
+};
+```
+Now I change the entry point code to see how the Knight looks inside a Square:
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Knight from './Knight';
+import Square from './Square';
+
+ReactDOM.render(
+  <Square black>
+    <Knight />
+  </Square>,
+  document.getElementById('root')
+);
+```
+Sadly, the screen is empty. I made a few mistakes:
+
+  * I forgot to give Square any dimensions so it just collapses. I don't want it to have any fixed size, so I'll give it width: '100%' and height: '100%' to fill the container.
+
+  * I forgot to put {this.props.children} inside the div returned by the Square, so it ignores the Knight passed to it.
+
+Even after correcting these two mistakes, I still can't see my Knight when the Square is black. That's because the default page body text color is black, so it is not visible on the black Square. I could have fixed this by giving Knight a color prop, but a much simpler fix is to set a corresponding color style in the same place where I set backgroundColor. This version of Square corrects the mistakes and works equally great with both colors:
+```
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+export default class Square extends Component {
+  render() {
+    const { black } = this.props;
+    const fill = black ? 'black' : 'white';
+    const stroke = black ? 'white' : 'black';
+
+    return (
+      <div style={{
+        backgroundColor: fill,
+        color: stroke,
+        width: '100%',
+        height: '100%'
+      }}>
+        {this.props.children}
+      </div>
+    );
+  }
+}
+
+Square.propTypes = {
+  black: PropTypes.bool
+};
+```
+Finally, time to get started with the Board! I'm going to start with an extremely naïve version that just draws the same single square:
+```
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import Square from './Square';
+import Knight from './Knight';
+
+export default class Board extends Component {
+  render() {
+    return (
+      <div>
+        <Square black>
+          <Knight />
+        </Square>
+      </div>
+    );
+  }
+}
+
+Board.propTypes = {
+  knightPosition: PropTypes.arrayOf(
+    PropTypes.number.isRequired
+  ).isRequired
+};
+```
+My only intention so far is to make it render, so that I can start tweaking it:
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Board from './Board';
+
+ReactDOM.render(
+  <Board knightPosition={[0, 0]} />,
+  document.getElementById('root')
+);
+```
+Indeed, I can see the same single square. I'm now going to add a whole bunch of them! But I don't know where to start. What do I put in render? Some kind of a for loop? A map over some array?
+
+To be honest, I don't want to think about it now. I already know how to render a single square with or without a knight. I also know the knight's position thanks to the knightPosition prop. This means I can write the renderSquare method and not worry about rendering the whole board just yet.
+
+My first attempt at renderSquare looks like this:
+```
+renderSquare(x, y) {
+  const black = (x + y) % 2 === 1;
+
+  const [knightX, knightY] = this.props.knightPosition;
+  const piece = (x === knightX && y === knightY) ?
+    <Knight /> :
+    null;
+
+  return (
+    <Square black={black}>
+      {piece}
+    </Square>
+  );
+}
+```
+I can already give it a whirl by changing render to be
+```
+render() {
+  return (
+    <div style={{
+      width: '100%',
+      height: '100%'
+    }}>
+      {this.renderSquare(0, 0)}
+      {this.renderSquare(1, 0)}
+      {this.renderSquare(2, 0)}
+    </div>
+  );
+}
+```
+At this point, I realize that I forgot to give my squares any layout. I'm going to try Flexbox because why not. I added some styles to the root div, and also wrapped the Squares into divs so I could lay them out. Generally it's a good idea to keep components encapsulated and ignorant of how they're being laid out, even if this means adding wrapper divs.
